@@ -27,7 +27,6 @@ header span{font-size:10px;letter-spacing:.05em}
 <body>
 <header><span>SEVENTEEN · D-DAY</span><span id="count"></span></header>
 <section class="grid" id="list"></section>
-<div class="note">전역·소집해제 예상일 기준 · 일정은 변경될 수 있습니다</div>
 <div class="birthday"><span class="birthday-label">NEXT BIRTHDAY</span><span class="birthday-name" id="birthday-name"></span><span class="birthday-date" id="birthday-date"></span><span class="birthday-dday" id="birthday-dday"></span></div>
 <script>
 const members=[
@@ -40,9 +39,9 @@ const members=[
 {name:"버논",date:"2028-05-19"},
 {name:"민규",date:"2028-06-09"}];
 const birthdays=[
-["에스쿱스",8,8],["정한",10,4],["조슈아",12,30],["준",6,10],
-["호시",6,15],["원우",7,17],["우지",11,22],["디에잇",11,7],
-["민규",4,6],["도겸",2,18],["승관",1,16],["버논",2,18],["디노",2,11]
+["승철",8,8],["정한",10,4],["지수",12,30],["준휘",6,10],
+["순영",6,15],["원우",7,17],["지훈",11,22],["명호",11,7],
+["민규",4,6],["석민",2,18],["승관",1,16],["한솔",2,18],["찬",2,11]
 ];
 function update(){
 const parts=new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Seoul",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date());
