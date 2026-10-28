@@ -14,14 +14,21 @@ header span{font-size:10px;letter-spacing:.05em}
 .date{font-size:12px;color:#777;letter-spacing:-.055em;font-variant-numeric:tabular-nums;flex:none}
 .dday{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.045em;flex:none}
 .note{font-size:9px;color:#888;padding-top:6px}
+.birthday{display:flex;align-items:center;gap:9px;min-height:31px;padding:5px 1px 0;border-top:1px solid #dedede;white-space:nowrap}
+.birthday-label{font-size:10px;letter-spacing:.025em;color:#666;margin-right:auto}
+.birthday-name{font-size:12px;font-weight:500}
+.birthday-date{font-size:11px;color:#777;font-variant-numeric:tabular-nums}
+.birthday-dday{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+@media(max-width:305px){.birthday{gap:5px}.birthday-label{font-size:9px}.birthday-name{font-size:11px}.birthday-date{font-size:10px}.birthday-dday{font-size:12px}}
 @media(min-width:450px){body{padding-inline:8px}.grid{column-gap:8px}.line{gap:5px}.name{font-size:13px}.date{font-size:11px}.dday{font-size:13px}}
 @media(max-width:305px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:8px}.line{gap:5px}.name{font-size:12px}.date{font-size:10px}.dday{font-size:12px}}
-@media(prefers-color-scheme:dark){body{background:#191919;color:#eee}header{border-color:#444}.line{border-color:#333}#count,.date,.note{color:#aaa}}
+@media(prefers-color-scheme:dark){body{background:#191919;color:#eee}header,.birthday{border-color:#444}.line{border-color:#333}#count,.date,.note,.birthday-label,.birthday-date{color:#aaa}}
 </style></head>
 <body>
 <header><span>SEVENTEEN · D-DAY</span><span id="count"></span></header>
 <section class="grid" id="list"></section>
 <div class="note">전역·소집해제 예상일 기준 · 일정은 변경될 수 있습니다</div>
+<div class="birthday"><span class="birthday-label">NEXT BIRTHDAY</span><span class="birthday-name" id="birthday-name"></span><span class="birthday-date" id="birthday-date"></span><span class="birthday-dday" id="birthday-dday"></span></div>
 <script>
 const members=[
 {name:"원우",date:"2027-01-02"},
@@ -32,11 +39,26 @@ const members=[
 {name:"디노",date:"2028-04-25"},
 {name:"버논",date:"2028-05-19"},
 {name:"민규",date:"2028-06-09"}];
+const birthdays=[
+["에스쿱스",8,8],["정한",10,4],["조슈아",12,30],["준",6,10],
+["호시",6,15],["원우",7,17],["우지",11,22],["디에잇",11,7],
+["민규",4,6],["도겸",2,18],["승관",1,16],["버논",2,18],["디노",2,11]
+];
 function update(){
 const parts=new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Seoul",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date());
 const get=t=>parts.find(p=>p.type===t).value;
 const now=Date.UTC(+get("year"),+get("month")-1,+get("day"));
 const left=members.map(m=>({...m,days:Math.round((Date.parse(m.date+"T00:00:00Z")-now)/86400000)})).filter(m=>m.days>=0).sort((a,b)=>a.days-b.days);
+const currentYear=+get("year"),currentMonth=+get("month"),currentDay=+get("day");
+const upcoming=birthdays.map(([name,month,day])=>{
+ const year=(month<currentMonth||(month===currentMonth&&day<currentDay))?currentYear+1:currentYear;
+ const days=Math.round((Date.UTC(year,month-1,day)-now)/86400000);
+ return {name,month,day,days};
+}).sort((a,b)=>a.days-b.days);
+const nearest=upcoming[0];
+document.querySelector("#birthday-name").textContent=nearest.name;
+document.querySelector("#birthday-date").textContent=String(nearest.month).padStart(2,"0")+"."+String(nearest.day).padStart(2,"0");
+document.querySelector("#birthday-dday").textContent=nearest.days===0?"D-DAY":"D-"+nearest.days;
 document.querySelector("#count").textContent=left.length+"명";
 document.querySelector("#list").innerHTML=left.map(m=>'<div class="line"><span class="name">'+m.name+'</span><span class="date">'+m.date.slice(2).replaceAll("-",".")+'</span><span class="dday">'+(m.days===0?"D-DAY":"D-"+m.days)+'</span></div>').join("")||'<div class="line">전원 복무 완료</div>'
 }
