@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SEVENTEEN · D-DAY</title>
+<style>
+:root{color-scheme:light dark}
+*{box-sizing:border-box}
+body{margin:0;padding:7px 4px;background:#fff;color:#161616;font:12px/1.4 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-bottom:6px;border-bottom:1px solid #dedede}
+header span{font-size:10px;letter-spacing:.05em}
+#count{color:#777;font-size:10px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:3px}
+.line{display:flex;align-items:center;justify-content:flex-start;gap:2px;min-width:0;min-height:30px;border-bottom:1px solid #eee;white-space:nowrap}
+.name{font-size:12px;flex:none;letter-spacing:-.045em}
+.date{font-size:10px;color:#777;letter-spacing:-.055em;font-variant-numeric:tabular-nums;flex:none}
+.dday{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.045em;flex:none}
+.note{font-size:9px;color:#888;padding-top:6px}
+@media(min-width:450px){body{padding-inline:8px}.grid{column-gap:8px}.line{gap:5px}.name{font-size:13px}.date{font-size:11px}.dday{font-size:13px}}
+@media(max-width:305px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:8px}.line{gap:5px}.name{font-size:12px}.date{font-size:10px}.dday{font-size:12px}}
+@media(prefers-color-scheme:dark){body{background:#191919;color:#eee}header{border-color:#444}.line{border-color:#333}#count,.date,.note{color:#aaa}}
+</style></head>
+<body>
+<header><span>SEVENTEEN · D-DAY</span><span id="count"></span></header>
+<section class="grid" id="list"></section>
+<div class="note">전역·소집해제 예상일 기준 · 일정은 변경될 수 있습니다</div>
+<script>
+const members=[
+{name:"원우",date:"2027-01-02"},
+{name:"우지",date:"2027-03-14"},
+{name:"호시",date:"2027-03-15"},
+{name:"도겸",date:"2028-03-07"},
+{name:"승관",date:"2028-04-25"},
+{name:"디노",date:"2028-04-25"},
+{name:"버논",date:"2028-05-19"},
+{name:"민규",date:"2028-06-09"}];
+function update(){
+const parts=new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Seoul",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date());
+const get=t=>parts.find(p=>p.type===t).value;
+const now=Date.UTC(+get("year"),+get("month")-1,+get("day"));
+const left=members.map(m=>({...m,days:Math.round((Date.parse(m.date+"T00:00:00Z")-now)/86400000)})).filter(m=>m.days>=0).sort((a,b)=>a.days-b.days);
+document.querySelector("#count").textContent=left.length+"명";
+document.querySelector("#list").innerHTML=left.map(m=>'<div class="line"><span class="name">'+m.name+'</span><span class="date">'+m.date.slice(2).replaceAll("-",".")+'</span><span class="dday">'+(m.days===0?"D-DAY":"D-"+m.days)+'</span></div>').join("")||'<div class="line">전원 복무 완료</div>'
+}
+update();setInterval(update,60000);
+</script></body></html>
